@@ -23,6 +23,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig
@@ -122,9 +125,12 @@ public class WebSecurityConfig
 
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
+                throws IOException
         {
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setStatus(403);
+            PrintWriter writer = response.getWriter();
+            writer.println("403");
         }
     }
 }
