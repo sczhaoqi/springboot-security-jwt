@@ -92,7 +92,7 @@ public class UserService
 
         final UserDetails userDetails = loadUserByUsername(username);
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return token;
+        return "Bearer " + token;
     }
 
     public String refreshToken(String oldToken)
