@@ -1,5 +1,6 @@
 package com.sc.zhaoqi.ssj.config;
 
+import com.sc.zhaoqi.ssj.service.UserService;
 import com.sc.zhaoqi.ssj.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +25,7 @@ import java.io.IOException;
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserService userDetailsService;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 

@@ -1,11 +1,14 @@
 package com.sc.zhaoqi.ssj.controller;
 
 import com.sc.zhaoqi.ssj.bean.Msg;
+import com.sc.zhaoqi.ssj.dto.LoginDto;
 import com.sc.zhaoqi.ssj.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,9 +26,9 @@ public class UserController
     }
 
     @PostMapping("/login")
-    public String login(String username, String password)
+    public String login(@RequestBody  LoginDto loginDto)
     {
-        return userService.login(username, password);
+        return userService.login(loginDto.getUsername(), loginDto.getPassword());
     }
 
     @PostMapping("/register")
