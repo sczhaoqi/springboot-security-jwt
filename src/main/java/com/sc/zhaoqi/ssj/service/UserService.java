@@ -86,13 +86,14 @@ public class UserService
 
     public String login(String username, String password)
     {
+        System.out.printf(username+"==="+password);
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
         final Authentication authentication = authenticationManager.authenticate(upToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final UserDetails userDetails = loadUserByUsername(username);
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return "Bearer " + token;
+        return token;
     }
 
     public String refreshToken(String oldToken)

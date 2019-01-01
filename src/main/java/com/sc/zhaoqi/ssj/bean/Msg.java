@@ -45,41 +45,43 @@ public class Msg<T>
         this.data = builder.data;
     }
 
-    public static class MsgBuilder<E>
-            implements Builder<Msg>
+    public static class MsgBuilder<T>
+            implements Builder
     {
-
         int code;
         String msg;
-        E data;
+        T data;
 
+        public MsgBuilder(){
+
+        }
         public MsgBuilder(int code)
         {
             this.code = code;
         }
 
-        public MsgBuilder<E> code(int code)
+        public MsgBuilder<T> code(int code)
         {
             this.code = code;
             return this;
         }
 
-        public MsgBuilder<E> msg(String msg)
+        public MsgBuilder<T> msg(String msg)
         {
             this.msg = msg;
             return this;
         }
 
-        public MsgBuilder<E> data(E data)
+        public MsgBuilder<T> data(T data)
         {
             this.data = data;
             return this;
         }
 
         @Override
-        public Msg build()
+        public Msg<T> build()
         {
-            return new Msg(this);
+            return new Msg<T>(this);
         }
     }
 
@@ -90,18 +92,19 @@ public class Msg<T>
 
     public static Msg ok(String msg)
     {
-        return new MsgBuilder<>(200).msg(msg).build();
+        return new MsgBuilder<String>(200).msg(msg).build();
     }
-    public static Msg ok(String msg,Object data)
+
+    public static <T>  Msg<T> ok(String msg, T data)
     {
-        return new MsgBuilder(200).msg(msg).build();
+        return new MsgBuilder<T>(200).data(data).msg(msg).build();
     }
     public static Msg error(String msg)
     {
-        return new MsgBuilder<>(400).msg(msg).build();
+        return new MsgBuilder<String>(400).msg(msg).build();
     }
     public static Msg sysError()
     {
-        return new MsgBuilder<>(500).msg("系统内部错误!").build();
+        return new MsgBuilder<String>(500).msg("系统内部错误!").build();
     }
 }
