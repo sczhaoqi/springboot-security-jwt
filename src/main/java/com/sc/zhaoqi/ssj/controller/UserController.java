@@ -5,6 +5,7 @@ import com.sc.zhaoqi.ssj.dto.LoginDto;
 import com.sc.zhaoqi.ssj.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +27,13 @@ public class UserController
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody  LoginDto loginDto)
+    public Msg<String> login(@RequestBody  LoginDto loginDto)
     {
-        return userService.login(loginDto.getUsername(), loginDto.getPassword());
+        try{
+            return Msg.ok("登陆成功", userService.login(loginDto.getUsername(), loginDto.getPassword()));
+        }catch (BadCredentialsException badCreExcept) {
+            return Msg.error("用户名或密码错误");
+        }
     }
 
     @PostMapping("/register")
