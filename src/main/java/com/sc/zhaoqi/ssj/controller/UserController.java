@@ -1,56 +1,62 @@
 package com.sc.zhaoqi.ssj.controller;
 
-import com.sc.zhaoqi.ssj.bean.Msg;
-import com.sc.zhaoqi.ssj.dto.LoginDto;
-import com.sc.zhaoqi.ssj.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 @RestController
-@RequestMapping("/user")
-public class UserController
+public class HomeController
 {
-    @Autowired
-    private UserService userService;
-
-    @PostMapping("/role")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Msg create(String user, String role)
+    @GetMapping("/")
+    public String index()
     {
-        return userService.addRole(user, role);
+        return "welcome";
     }
 
-    @PostMapping("/login")
-    public Msg<String> login(@RequestBody  LoginDto loginDto)
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping(value = "/admin/user_page")
+    @ResponseBody
+    public String adminTest1()
     {
-        try{
-            return Msg.ok("登陆成功", userService.login(loginDto.getUsername(), loginDto.getPassword()));
-        }catch (BadCredentialsException badCreExcept) {
-            return Msg.error("用户名或密码错误");
-        }
+        return "ROLE_USER";
     }
 
-    @PostMapping("/register")
-    public Msg register(String username, String password)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/admin/admmin_page")
+    @ResponseBody
+    public String adminTest2()
     {
-        try {
-            userService.register(username, password);
-            return Msg.ok("注册成功");
-        }
-        catch (Exception ex) {
-            return Msg.sysError();
-        }
+        return "ROLE_ADMIN";
     }
 
-    @PostMapping("/refreshToken")
-    public String refreshToken(String oldToken)
+    @GetMapping("/file/down")
+    public ResponseEntity<InputStreamResource> down()
+            throws IOException
     {
-        return userService.refreshToken(oldToken);
+        String filePath = "E:/1.xlsx";
+        FileSystemResource file = new FileSystemResource(filePath);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFilename()));
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentLength(file.contentLength())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .contentType(MediaType.parseMediaType(Files.probeContentType(Paths.get(filePath))))
+                .body(new InputStreamResource(file.getInputStream()));
     }
 }
